@@ -24,7 +24,7 @@
       --danger: #EF4444;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    body { font-family: 'Segoe UI', Arial, sans-serif; bg: var(--bg); color: var(--text); padding-bottom: 70px; background-color: var(--bg); }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg); color: var(--text); padding-bottom: 70px; }
     
     header { background: var(--primary); color: #fff; padding: 15px; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     header h1 { font-size: 1.1rem; font-weight: 600; }
@@ -67,7 +67,7 @@
     .tt-teach { font-size: 0.7rem; color: var(--muted); margin-top: 1px; }
 
     .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 6px 0; z-index: 100; }
-    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--muted); text-decoration: none; font-size: 0.7rem; gap: 2px; background: none; border: none; width: 20%; cursor: pointer; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--muted); text-decoration: none; font-size: 0.7rem; gap: 2px; background: none; border: none; width: 25%; cursor: pointer; }
     .nav-item.active { color: var(--accent); font-weight: 600; }
     .nav-icon { font-size: 1.3rem; }
 
@@ -83,7 +83,6 @@
     .form-group label { display: block; font-size: 0.8rem; font-weight: 500; margin-bottom: 4px; color: var(--muted); }
     .form-control { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.9rem; font-family: inherit; }
     .form-control:focus { outline: none; border-color: var(--accent); }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .checkbox-group { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
     .checkbox-group input { width: 16px; height: 16px; }
 
@@ -102,8 +101,8 @@
       .modal { align-items: center; justify-content: center; }
       .modal-content { width: 450px; border-radius: 12px; transform: scale(0.9); opacity: 0; transition: all 0.2s; }
       .modal.open .modal-content { transform: scale(1); opacity: 1; }
-      body { padding-bottom: 0; padding-top: 0; }
-      .nav-bar { top: 0; bottom: auto; left: auto; right: 15px; width: 400px; border-top: none; height: 50px; box-shadow: none; background: transparent; }
+      body { padding-bottom: 0; }
+      .nav-bar { top: 0; bottom: auto; left: auto; right: 15px; width: 400px; border-top: none; height: 50px; background: transparent; }
       header { padding-right: 430px; }
     }
   </style>
@@ -134,7 +133,7 @@
       <div class="card admin-only">
         <div class="card-title">Timetable Controls</div>
         <p style="font-size:0.8rem; color:var(--muted); margin-bottom:12px;">
-          Automatically generates lesson layouts satisfying specific constraints and counts.
+          Generates lesson tracks period-by-period to completely prevent duplicate teacher placements.
         </p>
         <div style="display:flex; gap:10px;">
           <button class="btn" onclick="openModal('generate-modal')">⚡ Generate layout</button>
@@ -222,9 +221,9 @@
         <label for="rule-morning"><strong>Prioritize morning slots</strong> (Push Mathematics & Sciences early)</label>
       </div>
       <div style="margin-top:15px; font-size:0.75rem; color:var(--muted); line-height:1.4;">
-        * Engine locks calculations to minimum allocations per week (e.g., Mathematics/English at 5, IRE/Arabic at 3, Agriculture at 3 inside Form 4 and 0 inside Form 3).
+        * Calculates step-by-step across all classes simultaneously to block teacher overlap conflicts.
       </div>
-      <button class="btn" style="width:100%; margin-top:15px;" onclick="generateTimetable()">Build Balanced Timetable</button>
+      <button class="btn" style="width:100%; margin-top:15px;" onclick="generateTimetable()">Build Timetable</button>
     </div>
   </div>
 
@@ -307,7 +306,6 @@
   <div id="toast"></div>
 
   <script>
-    // Constants mapping operational structure
     const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
     const CLASSES = ['Form 3', 'Form 4', 'Grade 10'];
     const SLOTS = [
@@ -322,7 +320,6 @@
       { id: 'P7', label: 'Period 7' }
     ];
 
-    // LocalStorage keys
     const LS = {
       get: (k) => JSON.parse(localStorage.getItem(k)),
       set: (k, v) => localStorage.setItem(k, JSON.stringify(v))
@@ -333,7 +330,6 @@
     const N_KEY = 'tt_notices_v1';
     const R_KEY = 'tt_role_v1';
 
-    // Core Memory State
     let teachers = LS.get(T_KEY) || [];
     let assignments = LS.get(A_KEY) || [];
     let ttData = LS.get(TT_KEY) || {};
@@ -341,7 +337,6 @@
     let isAdmin = LS.get(R_KEY) === null ? true : LS.get(R_KEY);
     let activeFilter = 'All';
 
-    // Seed initial system data if totally empty
     if (teachers.length === 0 && assignments.length === 0) {
       teachers = [
         { code: 'AA', name: 'Abdullahi Abdikadir' },
@@ -380,13 +375,12 @@
         { class: 'Grade 10', subj: 'P.E', teacher: 'AM', isSciMath: false },
         { class: 'Grade 10', subj: 'PPI', teacher: 'AA', isSciMath: false }
       ];
-      notices = [{ time: new Date().toLocaleString(), text: 'System initialized. Ready to generate custom layouts.' }];
+      notices = [{ time: new Date().toLocaleString(), text: 'System initialized. Ready to generate conflict-free tracks.' }];
       LS.set(T_KEY, teachers);
       LS.set(A_KEY, assignments);
       LS.set(N_KEY, notices);
     }
 
-    // Initialize View Layer
     window.addEventListener('DOMContentLoaded', () => {
       applyRoleUI();
       renderHome();
@@ -506,12 +500,11 @@
       container.innerHTML = html;
     }
 
-    // Strict Timetable Generation Engine
+    // SIMULTANEOUS SCHEDULING ENGINE (Blocks all duplicate teacher placements)
     function generateTimetable() {
       const ruleMorning = document.getElementById('rule-morning').checked;
       const ruleNoCons = document.getElementById('rule-noconsec').checked;
 
-      // 1. Target absolute values resolved from the absolute minimum limit criteria
       const weeklyQuotas = {
         'Form 4': {
           'Mathematics': 5, 'English': 5, 'Kiswahili': 4, 'Biology': 4, 'Chemistry': 4, 'Physics': 4,
@@ -523,30 +516,34 @@
         },
         'Grade 10': {
           'CSL/Computer': 5, 'ICT': 2, 'P.E': 3, 'PPI': 1
-          // Any unspecified default secondary subject inside Grade 10 falls to exactly 5 lessons per week
         }
       };
 
-      // 2. Clear trackers tracking counts per subject instance placement
       const placedCounts = {};
+      const lastTeacherInClass = {};
+      
       CLASSES.forEach(cls => {
         placedCounts[cls] = {};
+        lastTeacherInClass[cls] = null;
       });
 
       let newTT = {};
-      let ai = 0; 
+      let seedIndex = 0;
 
+      // Restructured Loop: Steps horizontally across time periods first
       DAYS.forEach(day => {
-        CLASSES.forEach(cls => {
-          let prevTeacher = null;
+        SLOTS.forEach(slot => {
+          if (slot.isBreak) return;
 
-          SLOTS.forEach(slot => {
-            if (slot.isBreak) return;
+          const isMorning = (slot.id === 'P1' || slot.id === 'P2' || slot.id === 'P3' || slot.id === 'P4');
+          
+          // Holds teachers who have been placed during this exact period
+          const teachersBusyNow = new Set();
 
+          // Loop through all classes simultaneously for this period
+          CLASSES.forEach(cls => {
             const k = `${day}_${cls}_${slot.id}`;
-            const isMorning = (slot.id === 'P1' || slot.id === 'P2' || slot.id === 'P3' || slot.id === 'P4');
-
-            // Find target category definitions based on string matching
+            
             let classCategory = 'Form 3';
             if (cls.includes('Form 4')) classCategory = 'Form 4';
             if (cls.includes('Grade 10') || cls.includes('G10')) classCategory = 'Grade 10';
@@ -555,38 +552,42 @@
             let tries = 0;
 
             while (tries < assignments.length) {
-              const a = assignments[(ai + tries) % assignments.length];
+              const a = assignments[(seedIndex + tries) % assignments.length];
               tries++;
 
-              // Verify matching data structure criteria
               if (classCategory === 'Form 4' && !a.class.includes('Form 4')) continue;
               if (classCategory === 'Form 3' && !a.class.includes('Form 3')) continue;
               if (classCategory === 'Grade 10' && !(a.class.includes('Grade 10') || a.class.includes('G10'))) continue;
 
               const currentCount = placedCounts[cls][a.subj] || 0;
-              
-              // Extract targets
               let maxAllowed = weeklyQuotas[classCategory][a.subj];
               if (maxAllowed === undefined) {
                 maxAllowed = (classCategory === 'Grade 10') ? 5 : 0;
               }
 
-              // Filter out subjects that have satisfied their weekly requirements
               if (currentCount >= maxAllowed) continue;
 
-              // Enforce operational restrictions
-              if (ruleNoCons && a.teacher === prevTeacher) continue;
-              if (ruleMorning && isMorning && !a.isSciMath && assignments.some(x => x.isSciMath && (placedCounts[cls][x.subj] || 0) < (weeklyQuotas[classCategory][x.subj] || 0))) continue;
+              // CRITICAL: Skip if this teacher is already in another class at this identical period
+              if (teachersBusyNow.has(a.teacher)) continue;
+
+              if (ruleNoCons && a.teacher === lastTeacherInClass[cls]) continue;
+              
+              if (ruleMorning && isMorning && !a.isSciMath && assignments.some(x => x.class === cls && x.isSciMath && (placedCounts[cls][x.subj] || 0) < (weeklyQuotas[classCategory][x.subj] || 0))) {
+                continue;
+              }
 
               picked = a;
-              ai = (ai + tries) % assignments.length;
+              seedIndex = (seedIndex + tries) % assignments.length;
               break;
             }
 
             if (picked) {
               newTT[k] = { subject: picked.subj, teacher: picked.teacher };
-              prevTeacher = picked.teacher;
+              lastTeacherInClass[cls] = picked.teacher;
               placedCounts[cls][picked.subj] = (placedCounts[cls][picked.subj] || 0) + 1;
+              
+              // Register this teacher as busy for this specific period
+              teachersBusyNow.add(picked.teacher);
             }
           });
         });
@@ -597,15 +598,15 @@
       closeModal('generate-modal');
       renderTimetable();
       renderHome();
-      toast('✅ Timetable layout generated successfully!');
+      toast('✅ Conflict-free timetable generated successfully!');
     }
 
     function clearTimetable() {
-      if(confirm('Are you sure you want to completely wipe the generated timetable layout?')) {
+      if(confirm('Are you sure you want to clear the current timetable layout?')) {
         ttData = {};
         localStorage.removeItem(TT_KEY);
         renderTimetable();
-        toast('Timetable wiped.');
+        toast('Timetable grid reset.');
       }
     }
 
@@ -627,13 +628,13 @@
       const teach = document.getElementById('a-teacher').value;
       const core = document.getElementById('a-scimath').checked;
 
-      if(!teach) { alert('Please create and select a teacher first.'); return; }
+      if(!teach) { alert('Please create a teacher first.'); return; }
 
       assignments.push({ class: cls, subj: subj, teacher: teach, isSciMath: core });
       LS.set(A_KEY, assignments);
       renderAssignments();
       closeModal('assignment-modal');
-      toast('Subject allocation saved.');
+      toast('Allocation added.');
     }
 
     function deleteAssignment(idx) {
@@ -657,8 +658,8 @@
       const code = document.getElementById('t-code').value.trim().toUpperCase();
       const name = document.getElementById('t-name').value.trim();
 
-      if(!code || !name) { alert('Fill in all fields.'); return; }
-      if(teachers.some(t => t.code === code)) { alert('Teacher initials code already exists.'); return; }
+      if(!code || !name) { alert('Please fill in all fields.'); return; }
+      if(teachers.some(t => t.code === code)) { alert('Teacher code already exists.'); return; }
 
       teachers.push({ code, name });
       LS.set(T_KEY, teachers);
@@ -667,13 +668,13 @@
       closeModal('teacher-modal');
       document.getElementById('t-code').value = '';
       document.getElementById('t-name').value = '';
-      toast('Teacher registry database updated.');
+      toast('Teacher added.');
     }
 
     function deleteTeacher(idx) {
       const code = teachers[idx].code;
       if(assignments.some(a => a.teacher === code)) {
-        alert('Cannot drop teacher. This individual is currently mapped to live subject allocations.');
+        alert('Cannot delete. This teacher has active subject allocations.');
         return;
       }
       teachers.splice(idx, 1);
@@ -690,7 +691,7 @@
       renderHome();
       closeModal('notice-modal');
       document.getElementById('n-text').value = '';
-      toast('Announcement broadcasted.');
+      toast('Notice published.');
     }
 
     function populateDropdowns() {
@@ -723,7 +724,7 @@
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW registration failed:', err));
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW failed:', err));
       });
     }
   </script>
