@@ -624,59 +624,127 @@ function getDefaultNotices() {
 }
 
 function getDefaultTT() {
-  const T = {};
-  const s = (day,sid,cls,subj,tc="") => { T[`${day}|${sid}|${cls}`] = {subject:subj, teacher:tc}; };
-  s("Monday",0,"F3","Kiswahili","003");s("Monday",0,"F4","Mathematics","004");
-  s("Monday",1,"G10","Mathematics","004");s("Monday",1,"F3","Mathematics","004");s("Monday",1,"F4","Physics","004");
-  s("Monday",2,"G10","English","005");s("Monday",2,"F3","Mathematics","004");s("Monday",2,"F4","English","005");
-  s("Monday",4,"G10","Chemistry / Business Studies","006/001");s("Monday",4,"F3","IRE","002");s("Monday",4,"F4","Chemistry","006");
-  s("Monday",5,"G10","Biology / IRE","007/002");s("Monday",5,"F3","Biology","007");s("Monday",5,"F4","Physics","004");
-  s("Monday",7,"G10","CSL","007");s("Monday",7,"F3","Chemistry","006");s("Monday",7,"F4","Biology","006");
-  s("Monday",8,"G10","Kiswahili","003");s("Monday",8,"F3","History & Citizenship","003");s("Monday",8,"F4","Kiswahili","003");
-  s("Monday",10,"G10","Mathematics","004");s("Monday",10,"F3","English","005");s("Monday",10,"F4","Business Studies","001");
-  s("Monday",11,"G10","P.E","—");s("Monday",11,"F3","Arabic","002");s("Monday",11,"F4","History & Citizenship","003");
-  s("Monday",12,"G10","IRE","002");s("Monday",12,"F3","Business Studies","001");s("Monday",12,"F4","Agriculture","007");
-  s("Tuesday",0,"F3","English","005");s("Tuesday",0,"F4","Mathematics","004");
-  s("Tuesday",1,"G10","English","005");s("Tuesday",1,"F3","Physics","004");s("Tuesday",1,"F4","Mathematics","004");
-  s("Tuesday",2,"G10","Mathematics","004");s("Tuesday",2,"F3","Chemistry","006");s("Tuesday",2,"F4","Biology","006");
-  s("Tuesday",4,"G10","Biology / General Science","007/006");s("Tuesday",4,"F3","Biology","007");s("Tuesday",4,"F4","English","005");
-  s("Tuesday",5,"G10","Chemistry / Business Studies","006/001");s("Tuesday",5,"F3","Biology","007");s("Tuesday",5,"F4","Chemistry","006");
-  s("Tuesday",7,"G10","CSL","007");s("Tuesday",7,"F3","Kiswahili","003");s("Tuesday",7,"F4","Kiswahili","003");
-  s("Tuesday",8,"G10","IRE","002");s("Tuesday",8,"F3","IRE","002");s("Tuesday",8,"F4","Chemistry","006");
-  s("Tuesday",10,"G10","Kiswahili","003");s("Tuesday",10,"F3","Mathematics","004");s("Tuesday",10,"F4","Biology","006");
-  s("Tuesday",11,"G10","P.E","—");s("Tuesday",11,"F3","History & Citizenship","003");s("Tuesday",11,"F4","IRE","002");
-  s("Tuesday",12,"G10","ICT","007");s("Tuesday",12,"F3","English","005");s("Tuesday",12,"F4","English","005");
-  s("Wednesday",0,"F3","Physics","004");s("Wednesday",0,"F4","Chemistry","006");
-  s("Wednesday",1,"G10","Mathematics","004");s("Wednesday",1,"F3","English","005");s("Wednesday",1,"F4","Chemistry","006");
-  s("Wednesday",2,"G10","Kiswahili","003");s("Wednesday",2,"F3","Mathematics","004");s("Wednesday",2,"F4","Physics","004");
-  s("Wednesday",4,"G10","Chemistry / Arabic","006/002");s("Wednesday",4,"F3","IRE","002");s("Wednesday",4,"F4","Mathematics","004");
-  s("Wednesday",5,"G10","Biology / Literature in English","007/005");s("Wednesday",5,"F3","Kiswahili","003");s("Wednesday",5,"F4","English","005");
-  s("Wednesday",7,"G10","CSL","007");s("Wednesday",7,"F3","Business Studies","001");s("Wednesday",7,"F4","Biology","006");
-  s("Wednesday",8,"G10","English","005");s("Wednesday",8,"F3","Chemistry","006");s("Wednesday",8,"F4","Kiswahili","003");
-  s("Wednesday",10,"G10","Kiswahili","003");s("Wednesday",10,"F3","Biology","007");s("Wednesday",10,"F4","Agriculture","007");
-  s("Wednesday",11,"G10","Mathematics","004");s("Wednesday",11,"F3","Biology","007");s("Wednesday",11,"F4","Business Studies","001");
-  s("Wednesday",12,"G10","P.E","—");s("Wednesday",12,"F3","History & Citizenship","003");s("Wednesday",12,"F4","Arabic","002");
-  s("Thursday",0,"F3","Chemistry","006");s("Thursday",0,"F4","Physics","004");
-  s("Thursday",1,"G10","English","005");s("Thursday",1,"F3","Physics","004");s("Thursday",1,"F4","Physics","004");
-  s("Thursday",2,"G10","Mathematics","004");s("Thursday",2,"F3","Physics","004");s("Thursday",2,"F4","English","005");
-  s("Thursday",4,"G10","Agriculture / History & Citizenship","007/003");s("Thursday",4,"F3","English","005");s("Thursday",4,"F4","Biology","006");
-  s("Thursday",5,"G10","Biology / Business Studies","007/001");s("Thursday",5,"F3","Mathematics","004");s("Thursday",5,"F4","Biology","006");
-  s("Thursday",7,"G10","CSL","007");s("Thursday",7,"F3","Kiswahili","003");s("Thursday",7,"F4","History & Citizenship","003");
-  s("Thursday",8,"G10","Kiswahili","003");s("Thursday",8,"F3","History & Citizenship","003");s("Thursday",8,"F4","Chemistry","006");
-  s("Thursday",10,"G10","Mathematics","004");s("Thursday",10,"F3","Business Studies","001");s("Thursday",10,"F4","Kiswahili","003");
-  s("Thursday",11,"G10","ICT","007");s("Thursday",11,"F3","IRE","002");s("Thursday",11,"F4","IRE","002");
-  s("Thursday",12,"G10","Personal Prep","—");s("Thursday",12,"F3","Arabic","002");s("Thursday",12,"F4","Business Studies","001");
-  s("Friday",0,"F3","Mathematics","004");s("Friday",0,"F4","Biology","006");
-  s("Friday",1,"G10","Kiswahili","003");s("Friday",1,"F3","Biology","007");s("Friday",1,"F4","Physics","004");
-  s("Friday",2,"G10","English","005");s("Friday",2,"F3","English","005");s("Friday",2,"F4","Mathematics","004");
-  s("Friday",4,"G10","Chemistry / Literature in English","006/005");s("Friday",4,"F3","Chemistry","006");s("Friday",4,"F4","Chemistry","006");
-  s("Friday",5,"G10","Agriculture / Arabic","007/002");s("Friday",5,"F3","Chemistry","006");s("Friday",5,"F4","Chemistry","006");
-  s("Friday",7,"G10","CSL","007");s("Friday",7,"F3","Kiswahili","003");s("Friday",7,"F4","Agriculture","007");
-  s("Friday",8,"G10","Mathematics","004");s("Friday",8,"F3","Business Studies","001");s("Friday",8,"F4","Kiswahili","003");
-  s("Friday",10,"G10","IRE","002");s("Friday",10,"F3","History & Citizenship","003");s("Friday",10,"F4","English","005");
-  s("Friday",11,"G10","General Science","006");s("Friday",11,"F3","English","005");s("Friday",11,"F4","History & Citizenship","003");
-  s("Friday",12,"G10","PPI","—");s("Friday",12,"F3","Mathematics","004");s("Friday",12,"F4","Business Studies","001");
-  return T;
+  return {
+  "Monday|0|F3":{subject:"Mathematics",teacher:"004"},
+  "Monday|0|F4":{subject:"Kiswahili",teacher:"003"},
+  "Monday|1|G10":{subject:"Chemistry",teacher:"006"},
+  "Monday|1|F3":{subject:"Mathematics",teacher:"004"},
+  "Monday|1|F4":{subject:"History & Citizenship",teacher:"003"},
+  "Monday|2|G10":{subject:"CSL",teacher:"007"},
+  "Monday|2|F4":{subject:"Mathematics",teacher:"004"},
+  "Monday|4|G10":{subject:"P.E",teacher:"—"},
+  "Monday|4|F3":{subject:"IRE",teacher:"002"},
+  "Monday|4|F4":{subject:"Physics",teacher:"004"},
+  "Monday|5|G10":{subject:"Kiswahili",teacher:"003"},
+  "Monday|5|F3":{subject:"Business Studies",teacher:"001"},
+  "Monday|5|F4":{subject:"Physics",teacher:"004"},
+  "Monday|7|G10":{subject:"Kiswahili",teacher:"003"},
+  "Monday|7|F4":{subject:"Agriculture",teacher:"007"},
+  "Monday|8|G10":{subject:"IRE",teacher:"002"},
+  "Monday|8|F4":{subject:"English",teacher:"005"},
+  "Monday|10|G10":{subject:"Chemistry",teacher:"006"},
+  "Monday|10|F3":{subject:"Arabic",teacher:"002"},
+  "Monday|10|F4":{subject:"History & Citizenship",teacher:"003"},
+  "Monday|11|G10":{subject:"ICT",teacher:"007"},
+  "Monday|11|F3":{subject:"English",teacher:"005"},
+  "Monday|12|G10":{subject:"English",teacher:"005"},
+  "Monday|12|F3":{subject:"History & Citizenship",teacher:"003"},
+  "Tuesday|0|F3":{subject:"Biology",teacher:"007"},
+  "Tuesday|0|F4":{subject:"Mathematics",teacher:"004"},
+  "Tuesday|1|G10":{subject:"General Science",teacher:"006"},
+  "Tuesday|1|F3":{subject:"IRE",teacher:"002"},
+  "Tuesday|1|F4":{subject:"Mathematics",teacher:"004"},
+  "Tuesday|2|G10":{subject:"IRE",teacher:"002"},
+  "Tuesday|2|F3":{subject:"Mathematics",teacher:"004"},
+  "Tuesday|2|F4":{subject:"Biology",teacher:"006"},
+  "Tuesday|4|G10":{subject:"Agriculture",teacher:"007"},
+  "Tuesday|4|F3":{subject:"Business Studies",teacher:"001"},
+  "Tuesday|4|F4":{subject:"Mathematics",teacher:"004"},
+  "Tuesday|5|G10":{subject:"Mathematics",teacher:"004"},
+  "Tuesday|7|G10":{subject:"English",teacher:"005"},
+  "Tuesday|7|F4":{subject:"IRE",teacher:"002"},
+  "Tuesday|8|G10":{subject:"Mathematics",teacher:"004"},
+  "Tuesday|8|F3":{subject:"Business Studies",teacher:"001"},
+  "Tuesday|10|G10":{subject:"IRE",teacher:"002"},
+  "Tuesday|10|F3":{subject:"Kiswahili",teacher:"003"},
+  "Tuesday|10|F4":{subject:"English",teacher:"005"},
+  "Tuesday|11|G10":{subject:"CSL",teacher:"007"},
+  "Tuesday|11|F3":{subject:"English",teacher:"005"},
+  "Tuesday|12|G10":{subject:"Arabic",teacher:"002"},
+  "Tuesday|12|F3":{subject:"History & Citizenship",teacher:"003"},
+  "Tuesday|12|F4":{subject:"Agriculture",teacher:"007"},
+  "Wednesday|0|F3":{subject:"Biology",teacher:"007"},
+  "Wednesday|0|F4":{subject:"Chemistry",teacher:"006"},
+  "Wednesday|1|G10":{subject:"Mathematics",teacher:"004"},
+  "Wednesday|1|F3":{subject:"Biology",teacher:"007"},
+  "Wednesday|1|F4":{subject:"Chemistry",teacher:"006"},
+  "Wednesday|2|G10":{subject:"General Science",teacher:"006"},
+  "Wednesday|4|G10":{subject:"History & Citizenship",teacher:"003"},
+  "Wednesday|4|F3":{subject:"Physics",teacher:"004"},
+  "Wednesday|5|G10":{subject:"English",teacher:"005"},
+  "Wednesday|5|F3":{subject:"Chemistry",teacher:"006"},
+  "Wednesday|7|G10":{subject:"IRE",teacher:"002"},
+  "Wednesday|7|F4":{subject:"Business Studies",teacher:"001"},
+  "Wednesday|8|G10":{subject:"History & Citizenship",teacher:"003"},
+  "Wednesday|8|F3":{subject:"English",teacher:"005"},
+  "Wednesday|8|F4":{subject:"Biology",teacher:"006"},
+  "Wednesday|10|G10":{subject:"Mathematics",teacher:"004"},
+  "Wednesday|10|F3":{subject:"Arabic",teacher:"002"},
+  "Wednesday|10|F4":{subject:"Kiswahili",teacher:"003"},
+  "Wednesday|11|G10":{subject:"Business Studies",teacher:"001"},
+  "Wednesday|12|G10":{subject:"Personal Prep",teacher:"—"},
+  "Wednesday|12|F4":{subject:"IRE",teacher:"002"},
+  "Thursday|0|F3":{subject:"Physics",teacher:"004"},
+  "Thursday|0|F4":{subject:"Biology",teacher:"006"},
+  "Thursday|1|G10":{subject:"CSL",teacher:"007"},
+  "Thursday|1|F3":{subject:"Physics",teacher:"004"},
+  "Thursday|1|F4":{subject:"Biology",teacher:"006"},
+  "Thursday|2|G10":{subject:"PPI",teacher:"—"},
+  "Thursday|2|F4":{subject:"Mathematics",teacher:"004"},
+  "Thursday|4|G10":{subject:"Kiswahili",teacher:"003"},
+  "Thursday|4|F3":{subject:"Biology",teacher:"007"},
+  "Thursday|5|G10":{subject:"Biology",teacher:"007"},
+  "Thursday|5|F3":{subject:"Mathematics",teacher:"004"},
+  "Thursday|7|G10":{subject:"IRE",teacher:"002"},
+  "Thursday|7|F3":{subject:"English",teacher:"005"},
+  "Thursday|7|F4":{subject:"Agriculture",teacher:"007"},
+  "Thursday|8|G10":{subject:"Agriculture",teacher:"007"},
+  "Thursday|8|F3":{subject:"Chemistry",teacher:"006"},
+  "Thursday|8|F4":{subject:"History & Citizenship",teacher:"003"},
+  "Thursday|10|G10":{subject:"P.E",teacher:"—"},
+  "Thursday|10|F3":{subject:"Kiswahili",teacher:"003"},
+  "Thursday|10|F4":{subject:"English",teacher:"005"},
+  "Thursday|11|G10":{subject:"Kiswahili",teacher:"003"},
+  "Thursday|11|F4":{subject:"Business Studies",teacher:"001"},
+  "Thursday|12|G10":{subject:"Literature in English",teacher:"005"},
+  "Thursday|12|F3":{subject:"Kiswahili",teacher:"003"},
+  "Thursday|12|F4":{subject:"Business Studies",teacher:"001"},
+  "Friday|0|F3":{subject:"Chemistry",teacher:"006"},
+  "Friday|0|F4":{subject:"English",teacher:"005"},
+  "Friday|1|G10":{subject:"Arabic",teacher:"002"},
+  "Friday|1|F3":{subject:"Chemistry",teacher:"006"},
+  "Friday|1|F4":{subject:"Physics",teacher:"004"},
+  "Friday|2|G10":{subject:"Mathematics",teacher:"004"},
+  "Friday|2|F3":{subject:"English",teacher:"005"},
+  "Friday|2|F4":{subject:"Chemistry",teacher:"006"},
+  "Friday|4|G10":{subject:"Literature in English",teacher:"005"},
+  "Friday|4|F4":{subject:"Physics",teacher:"004"},
+  "Friday|5|G10":{subject:"Business Studies",teacher:"001"},
+  "Friday|5|F3":{subject:"Physics",teacher:"004"},
+  "Friday|5|F4":{subject:"Chemistry",teacher:"006"},
+  "Friday|7|G10":{subject:"English",teacher:"005"},
+  "Friday|7|F4":{subject:"Kiswahili",teacher:"003"},
+  "Friday|8|G10":{subject:"English",teacher:"005"},
+  "Friday|8|F3":{subject:"Kiswahili",teacher:"003"},
+  "Friday|10|G10":{subject:"CSL",teacher:"007"},
+  "Friday|10|F3":{subject:"Mathematics",teacher:"004"},
+  "Friday|10|F4":{subject:"Kiswahili",teacher:"003"},
+  "Friday|11|G10":{subject:"Biology",teacher:"007"},
+  "Friday|11|F4":{subject:"English",teacher:"005"},
+  "Friday|12|G10":{subject:"P.E",teacher:"—"},
+  "Friday|12|F3":{subject:"History & Citizenship",teacher:"003"},
+  "Friday|12|F4":{subject:"Arabic",teacher:"002"}
+  };
 }
 
 // ── AUTH ──────────────────────────────────────────────────────────────────────
