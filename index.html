@@ -133,7 +133,7 @@
       <div class="card admin-only">
         <div class="card-title">Timetable Controls</div>
         <p style="font-size:0.8rem; color:var(--muted); margin-bottom:12px;">
-          Generates lesson tracks period-by-period to completely prevent duplicate teacher placements.
+          Generates conflict-free layouts with global teacher slot protection.
         </p>
         <div style="display:flex; gap:10px;">
           <button class="btn" onclick="openModal('generate-modal')">⚡ Generate layout</button>
@@ -221,7 +221,7 @@
         <label for="rule-morning"><strong>Prioritize morning slots</strong> (Push Mathematics & Sciences early)</label>
       </div>
       <div style="margin-top:15px; font-size:0.75rem; color:var(--muted); line-height:1.4;">
-        * Calculates step-by-step across all classes simultaneously to block teacher overlap conflicts.
+        * Uses permanent time-slot tracking to lock teachers and prevent cross-class overlap clashes.
       </div>
       <button class="btn" style="width:100%; margin-top:15px;" onclick="generateTimetable()">Build Timetable</button>
     </div>
@@ -500,7 +500,7 @@
       container.innerHTML = html;
     }
 
-    // SIMULTANEOUS SCHEDULING ENGINE (Blocks all duplicate teacher placements)
+    // CLASH-PROOF TIMETABLE GENERATION ENGINE
     function generateTimetable() {
       const ruleMorning = document.getElementById('rule-morning').checked;
       const ruleNoCons = document.getElementById('rule-noconsec').checked;
@@ -527,20 +527,20 @@
         lastTeacherInClass[cls] = null;
       });
 
+      // Fixed Master tracking registry variable to preserve teacher state across cross-class steps
+      const globalTeacherBusy = {};
+
       let newTT = {};
       let seedIndex = 0;
 
-      // Restructured Loop: Steps horizontally across time periods first
+      // Outer step loops through Day first, then across individual periods
       DAYS.forEach(day => {
         SLOTS.forEach(slot => {
           if (slot.isBreak) return;
 
           const isMorning = (slot.id === 'P1' || slot.id === 'P2' || slot.id === 'P3' || slot.id === 'P4');
-          
-          // Holds teachers who have been placed during this exact period
-          const teachersBusyNow = new Set();
 
-          // Loop through all classes simultaneously for this period
+          // Process all classes concurrently for the current day-period block
           CLASSES.forEach(cls => {
             const k = `${day}_${cls}_${slot.id}`;
             
@@ -567,8 +567,11 @@
 
               if (currentCount >= maxAllowed) continue;
 
-              // CRITICAL: Skip if this teacher is already in another class at this identical period
-              if (teachersBusyNow.has(a.teacher)) continue;
+              // GLOBAL DOUBLE-ALLOCATION DEFENSE CHECK
+              const timeTeacherKey = `${day}_${slot.id}_${a.teacher}`;
+              if (globalTeacherBusy[timeTeacherKey]) {
+                continue; // Skip this teacher option entirely
+              }
 
               if (ruleNoCons && a.teacher === lastTeacherInClass[cls]) continue;
               
@@ -586,8 +589,9 @@
               lastTeacherInClass[cls] = picked.teacher;
               placedCounts[cls][picked.subj] = (placedCounts[cls][picked.subj] || 0) + 1;
               
-              // Register this teacher as busy for this specific period
-              teachersBusyNow.add(picked.teacher);
+              // Permanently register teacher as busy for this specific calendar hour block
+              const lockKey = `${day}_${slot.id}_${picked.teacher}`;
+              globalTeacherBusy[lockKey] = true;
             }
           });
         });
