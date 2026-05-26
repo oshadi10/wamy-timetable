@@ -337,6 +337,7 @@
     let isAdmin = LS.get(R_KEY) === null ? true : LS.get(R_KEY);
     let activeFilter = 'All';
 
+    // Seed generic sample profiles only if local database storage is absolutely empty
     if (teachers.length === 0 && assignments.length === 0) {
       teachers = [
         { code: 'AA', name: 'Abdullahi Abdikadir' },
@@ -500,7 +501,7 @@
       container.innerHTML = html;
     }
 
-    // CLASH-PROOF TIMETABLE GENERATION ENGINE
+    // CLASH-PROOF TIMETABLE GENERATION ENGINE (Preserves your custom storage allocations)
     function generateTimetable() {
       const ruleMorning = document.getElementById('rule-morning').checked;
       const ruleNoCons = document.getElementById('rule-noconsec').checked;
@@ -527,20 +528,20 @@
         lastTeacherInClass[cls] = null;
       });
 
-      // Fixed Master tracking registry variable to preserve teacher state across cross-class steps
+      // Persistent global tracker to ensure strict clash prevention across parallel streams
       const globalTeacherBusy = {};
 
       let newTT = {};
       let seedIndex = 0;
 
-      // Outer step loops through Day first, then across individual periods
+      // Outer block steps chronologically through Day and Slot first
       DAYS.forEach(day => {
         SLOTS.forEach(slot => {
           if (slot.isBreak) return;
 
           const isMorning = (slot.id === 'P1' || slot.id === 'P2' || slot.id === 'P3' || slot.id === 'P4');
 
-          // Process all classes concurrently for the current day-period block
+          // Process all classes simultaneously for the current day-period block
           CLASSES.forEach(cls => {
             const k = `${day}_${cls}_${slot.id}`;
             
@@ -570,7 +571,7 @@
               // GLOBAL DOUBLE-ALLOCATION DEFENSE CHECK
               const timeTeacherKey = `${day}_${slot.id}_${a.teacher}`;
               if (globalTeacherBusy[timeTeacherKey]) {
-                continue; // Skip this teacher option entirely
+                continue; // Skip this teacher if they are busy in an alternating stream
               }
 
               if (ruleNoCons && a.teacher === lastTeacherInClass[cls]) continue;
@@ -589,7 +590,7 @@
               lastTeacherInClass[cls] = picked.teacher;
               placedCounts[cls][picked.subj] = (placedCounts[cls][picked.subj] || 0) + 1;
               
-              // Permanently register teacher as busy for this specific calendar hour block
+              // Register key to busy status map
               const lockKey = `${day}_${slot.id}_${picked.teacher}`;
               globalTeacherBusy[lockKey] = true;
             }
